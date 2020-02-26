@@ -6,8 +6,6 @@ import org.apache.commons.cli.Option
 import org.apache.commons.cli.Options
 import org.zeroturnaround.zip.ZipUtil
 import java.io.File
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 import java.util.zip.ZipFile
 
 fun main(args: Array<String>) {
@@ -16,7 +14,6 @@ fun main(args: Array<String>) {
 
 class SignPackage(val args: Array<String>) {
     val tmpDir = File("tmpdir${System.currentTimeMillis()}")
-    val threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
 
     private val OPTION_DIR = "d"
     private val OPTION_SIGN_KEY = "k"
@@ -24,7 +21,7 @@ class SignPackage(val args: Array<String>) {
     private val OPTION_RUNTIME = "r"
     private val OPTION_TIMESTAMP = "t"
     private val OPTION_EXCLUDE = "x"
-    private var excludedFiles: Array<String> = emptyArray()
+    private var excludedFiles : Array<String> = emptyArray()
 
     fun run() {
         val options = Options()
@@ -54,8 +51,6 @@ class SignPackage(val args: Array<String>) {
 
             // Start scanning and signing the jar files
             scanRecursive(File(cmd.getOptionValue(OPTION_DIR)), cmd)
-            threadPool.shutdown()
-            threadPool.awaitTermination(1, TimeUnit.DAYS)
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
@@ -72,25 +67,23 @@ class SignPackage(val args: Array<String>) {
                 if (file.isDirectory) {
                     scanRecursive(file, cmd)
                 } else if (file.name.endsWith(".jar")) {
-                    threadPool.submit {
-                        ZipFile(file).entries().asSequence().forEach { zipEntry ->
-                            if (zipEntry.name.endsWith(".dylib")) {
-                                // Extract, sign and compress the dylib file.
-                                println("${file.absolutePath}: ${zipEntry.name}")
-                                val dylibFile = File(tmpDir, File(zipEntry.name).name)
-                                ZipUtil.unpackEntry(file, zipEntry.name, dylibFile)
-                                signFile(dylibFile, cmd)
-                                ZipUtil.replaceEntry(file, zipEntry.name, dylibFile)
-                            }
+                    ZipFile(file).entries().asSequence().forEach { zipEntry ->
+                        if (zipEntry.name.endsWith(".dylib")) {
+                            // Extract, sign and compress the dylib file.
+                            println("${file.absolutePath}: ${zipEntry.name}")
+                            val dylibFile = File(tmpDir, File(zipEntry.name).name)
+                            ZipUtil.unpackEntry(file, zipEntry.name, dylibFile)
+                            signFile(dylibFile, cmd)
+                            ZipUtil.replaceEntry(file, zipEntry.name, dylibFile)
                         }
-
-                        // Sign the jar file
-                        println(file.absolutePath)
-                        signFile(file, cmd)
                     }
+
+                    // Sign the jar file
+                    println(file.absolutePath)
+                    signFile(file, cmd)
                 } else if (file.name.endsWith(".dylib") || file.canExecute()) {
                     println(file.absolutePath)
-                    threadPool.submit { signFile(file, cmd) }
+                    signFile(file, cmd)
                 }
             }
         }
@@ -112,14 +105,11 @@ class SignPackage(val args: Array<String>) {
 
         println(command.joinToString(" "))
 
-        val resultCode = ProcessBuilder()
+        ProcessBuilder()
                 .directory(dylibFile.parentFile)
                 .inheritIO()
                 .command(command)
                 .start()
                 .waitFor()
-        if (resultCode != 0) {
-            throw Exception("Resultcode $resultCode when executing ${command.joinToString(" ")}")
-        }
     }
 }
