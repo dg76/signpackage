@@ -16,3 +16,5 @@ The parameters are:
 -k Key name
 -e Entitlements file
 ```
+
+It is explained further here: https://blog.dgunia.de/2020/02/12/signed-macos-programs-with-java-14/
