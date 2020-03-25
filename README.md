@@ -18,3 +18,5 @@ The parameters are:
 ```
 
 It is explained further here: https://blog.dgunia.de/2020/02/12/signed-macos-programs-with-java-14/
+
+To build the SignPackage.jar file just run build.sh.
