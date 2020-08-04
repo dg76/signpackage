@@ -68,7 +68,7 @@ class SignPackage(val args: Array<String>) {
                     scanRecursive(file, cmd)
                 } else if (file.name.endsWith(".jar")) {
                     ZipFile(file).entries().asSequence().forEach { zipEntry ->
-                        if (zipEntry.name.endsWith(".dylib")) {
+                        if (zipEntry.name.endsWith(".dylib") || zipEntry.name.endsWith(".jnilib")) {
                             // Extract, sign and compress the dylib file.
                             println("${file.absolutePath}: ${zipEntry.name}")
                             val dylibFile = File(tmpDir, File(zipEntry.name).name)
