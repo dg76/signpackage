@@ -15,6 +15,7 @@ The parameters are:
 -r Harden using the codesign runtime parameter
 -k Key name
 -e Entitlements file
+-x Excludes files from being signed. Can be used multiple times to specify multiple files. You have to specify the path including directories.
 ```
 
 It is explained further here: https://blog.dgunia.de/2020/02/12/signed-macos-programs-with-java-14/

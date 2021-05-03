@@ -1,9 +1,6 @@
 package com.dgunia.signpackage
 
-import org.apache.commons.cli.CommandLine
-import org.apache.commons.cli.DefaultParser
-import org.apache.commons.cli.Option
-import org.apache.commons.cli.Options
+import org.apache.commons.cli.*
 import org.zeroturnaround.zip.ZipUtil
 import java.io.File
 import java.util.zip.ZipFile
@@ -30,7 +27,7 @@ class SignPackage(val args: Array<String>) {
         options.addOption(Option.builder(OPTION_ENTITLEMENTS).longOpt("entitlements").desc("Entitlements file").hasArg().build())
         options.addOption(Option.builder(OPTION_RUNTIME).longOpt("runtime").desc("Harden using runtime parameter").build())
         options.addOption(Option.builder(OPTION_TIMESTAMP).longOpt("timestamp").desc("Set secure timestamp using timestamp parameter").build())
-        options.addOption(Option.builder(OPTION_EXCLUDE).longOpt("exclude").hasArgs().desc("Set secure timestamp using timestamp parameter").build())
+        options.addOption(Option.builder(OPTION_EXCLUDE).longOpt("exclude").hasArgs().desc("Excludes files from being signed. Can be used multiple times to specify multiple files. You have to specify the path including directories.").build())
 
         val parser = DefaultParser()
         try {
@@ -53,6 +50,7 @@ class SignPackage(val args: Array<String>) {
             scanRecursive(File(cmd.getOptionValue(OPTION_DIR)), cmd)
         } catch (e: Exception) {
             e.printStackTrace()
+            HelpFormatter().printHelp("java -jar SignPackage.jar", options)
         } finally {
             tmpDir.deleteRecursively()
         }
