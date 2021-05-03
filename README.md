@@ -1,6 +1,6 @@
 # SignPackage
 
-To notarize Java apps on macOS it is necessary to sign all jar and dylib file in the .app package with the same signature. 
+To notarize Java apps on macOS it is necessary to sign all jar and dylib files in the .app package with the same signature. 
 dylib files can even exist inside jar files and have to be signed inside the jar file, too. This program here performs the
 codesign process. You can use it e.g. like this:
 
