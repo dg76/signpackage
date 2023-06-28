@@ -79,7 +79,7 @@ class SignPackage(val args: Array<String>) {
                     // Sign the jar file
                     println(file.absolutePath)
                     signFile(file, cmd)
-                } else if (file.name.endsWith(".dylib") || file.canExecute()) {
+                } else if (file.name.endsWith(".dylib") || file.name.endsWith(".jnilib") || file.canExecute()) {
                     println(file.absolutePath)
                     signFile(file, cmd)
                 }
