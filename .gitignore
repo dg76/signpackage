@@ -1,0 +1,13 @@
+.idea
+.gradle
+*iml
+build
+/*.properties
+out
+*.log
+build-*.sh
+.DS_Store
+.jar
+.class
+target
+SignPackage.jar
